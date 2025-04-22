@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using DevFreela.API.Models;
+using Microsoft.AspNetCore.Mvc;
 
 namespace DevFreela.API.Controllers
 {
@@ -6,5 +7,17 @@ namespace DevFreela.API.Controllers
     [Route("api/users")]
     public class UsersController : ControllerBase
     {
+        [HttpPost]
+        public IActionResult Post()
+        {
+            return Ok();
+        }
+
+        [HttpDelete]
+        public IActionResult Delete()
+        {
+            return NoContent();
+        }
+
     }
 }
