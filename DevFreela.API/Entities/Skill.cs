@@ -13,5 +13,10 @@
         public string Description { get; private set; }
 
         public List<UserSkill> UserSkills { get; private set; }
+
+        public void Update(string description)
+        {
+            Description = description;
+        }
     }
 }
