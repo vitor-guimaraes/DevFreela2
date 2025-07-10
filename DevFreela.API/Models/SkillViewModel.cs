@@ -2,7 +2,7 @@
 
 namespace DevFreela.API.Models
 {
-    internal class SkillViewModel
+    public class SkillViewModel
     {
         public SkillViewModel(int id, string description)
         {
