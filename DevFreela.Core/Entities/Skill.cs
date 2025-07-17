@@ -1,4 +1,6 @@
-﻿namespace DevFreela.API.Entities
+﻿using DevFreela.Core.Entities;
+
+namespace DevFreela.Core.Entities
 {
     public class Skill : BaseEntity
     {
