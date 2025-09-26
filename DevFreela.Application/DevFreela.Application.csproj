@@ -7,8 +7,24 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="MediatR" Version="13.0.0" />
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\DevFreela.Core\DevFreela.Core.csproj" />
     <ProjectReference Include="..\DevFreela.Infrastructure\DevFreela.Infrastructure.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Commands\ProjectCommands\DeleteProject\" />
+    <Folder Include="Commands\ProjectCommands\CompleteProject\" />
+    <Folder Include="Commands\ProjectCommands\InsertComment\" />
+    <Folder Include="Commands\ProjectCommands\" />
+    <Folder Include="Commands\ProjectCommands\StartProject\" />
+    <Folder Include="Commands\ProjectCommands\UpdateProject\" />
+    <Folder Include="Commands\ProjectCommands\InsertProject\" />
+    <Folder Include="Queries\GetProjectById\" />
+    <Folder Include="Queries\GetAllProjects\" />
   </ItemGroup>
 
 </Project>

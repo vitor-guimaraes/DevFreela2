@@ -11,11 +11,9 @@ namespace DevFreela.API.Controllers
     public class ProjectsController : ControllerBase
     {
 
-        private readonly DevFreelaDbContext _context;
         private readonly IProjectService _service;
-        public ProjectsController(DevFreelaDbContext context, IProjectService service)
+        public ProjectsController(IProjectService service)
         {
-            _context = context;
             _service = service;
         }
 
@@ -47,91 +45,108 @@ namespace DevFreela.API.Controllers
         [HttpPut("{id}")]
         public IActionResult UpdateProject(int id, UpdateProjectInputModel model) 
         {
-            var result = _context.Projects.SingleOrDefault(p => p.Id == id);
+            //var result = _context.Projects.SingleOrDefault(p => p.Id == id);
 
-            if (result is null)
-            {
-                return BadRequest();
-            }
+            //if (result is null)
+            //{
+            //    return BadRequest();
+            //}
 
-            result.Update(model.Title, model.Description, model.TotalCost);
+            //result.Update(model.Title, model.Description, model.TotalCost);
 
-            _context.Projects.Update(result);
-            _context.SaveChanges();
+            //_context.Projects.Update(result);
+            //_context.SaveChanges();
 
-            return NoContent();
+            var result =_service.UpdateProject(id, model);
+
+            //return id == model.IdProject ? NoContent() : BadRequest();
+            return result.IsSuccess ? NoContent() : BadRequest(result.Message);
+
         }
 
         [HttpDelete("{id}")]
         public IActionResult DeleteProject(int id)
         {
-            var result = _context.Projects.SingleOrDefault(p => p.Id == id);
+            //var result = _context.Projects.SingleOrDefault(p => p.Id == id);
 
-            if (result is null)
-            {
-                return BadRequest();
-            }
+            //if (result is null)
+            //{
+            //    return BadRequest();
+            //}
 
-            result.SetAsDeleted();
+            //result.SetAsDeleted();
 
-            _context.Projects.Update(result);
-            _context.SaveChanges();
+            //_context.Projects.Update(result);
+            //_context.SaveChanges();
 
-            return NoContent();
+            //return NoContent();
+
+            var result = _service.DeleteProject(id);
+
+            return result.IsSuccess ? NoContent() : BadRequest(result.Message);
         }
 
         [HttpPut("{id}/complete")]
         public IActionResult CompleteProject(int id)
         {
-            var result = _context.Projects.SingleOrDefault(p => p.Id == id);
+            //var result = _context.Projects.SingleOrDefault(p => p.Id == id);
 
-            if (result is null)
-            {
-                return BadRequest();
-            }
+            //if (result is null)
+            //{
+            //    return BadRequest();
+            //}
 
-            result.Complete();
+            //result.Complete();
 
-            _context.Projects.Update(result);
-            _context.SaveChanges();
+            //_context.Projects.Update(result);
+            //_context.SaveChanges();
 
-            return NoContent();
+            //return NoContent();
+
+            var result = _service.CompleteProject(id);
+
+            return result.IsSuccess ? NoContent() : BadRequest(result.Message);
         }
 
         [HttpPut("{id}/start")]
         public IActionResult StartProject(int id)
         {
-            var result = _context.Projects.SingleOrDefault(p => p.Id == id);
+            //var result = _context.Projects.SingleOrDefault(p => p.Id == id);
 
-            if (result is null)
-            {
-                return BadRequest();
-            }
+            //if (result is null)
+            //{
+            //    return BadRequest();
+            //}
 
-            result.Start();
+            //result.Start();
 
-            _context.Projects.Update(result);
-            _context.SaveChanges();
+            //_context.Projects.Update(result);
+            //_context.SaveChanges();
 
-            return NoContent();
+            //return NoContent();
+            var result = _service.StartProject(id);
+
+            return result.IsSuccess ? NoContent() : BadRequest(result.Message);
         }
 
         [HttpPost("{id}/comments")]
         public IActionResult PostComment(int id, CreateProjectCommentInputModel model)
         {
-            var result = _context.Projects.SingleOrDefault(p => p.Id == id);
+            //var result = _context.Projects.SingleOrDefault(p => p.Id == id);
 
-            if (result is null)
-            {
-                return BadRequest();
-            }
+            //if (result is null)
+            //{
+            //    return BadRequest();
+            //}
 
-            var comment = new ProjectComment(model.Content, id, model.IdUser);
+            //var comment = new ProjectComment(model.Content, id, model.IdUser);
 
-            _context.ProjectComments.Add(comment);
-            _context.SaveChanges();
+            //_context.ProjectComments.Add(comment);
+            //_context.SaveChanges();
 
-            return NoContent();
+            //return NoContent();
+            var result = _service.PostComment(id, model);
+            return result.IsSuccess ? NoContent() : BadRequest(result.Message);
         }
 
 
