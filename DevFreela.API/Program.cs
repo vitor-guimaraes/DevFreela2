@@ -12,12 +12,16 @@ builder.Services.Configure<FreelanceTotalCostConfig>(
     builder.Configuration.GetSection("FreelanceTotalCostConfig")
     );
 
+var env = builder.Environment.EnvironmentName;
+Console.WriteLine($"Environment: {env}");
 
 //builder.Services.AddDbContext<DevFreelaDbContext>(o => o.UseInMemoryDatabase("DevFreelaDb"));
 var connectionString = builder.Configuration.GetConnectionString("DevFreelaCs"); //Gets connection string from appsettings.json
 builder.Services.AddDbContext<DevFreelaDbContext>(o => o.UseSqlServer(connectionString));
 
-builder.Services.AddApplicationServices();
+//builder.Services.AddApplicationServices();
+builder.Services.AddApplication();
+
 
 builder.Services.AddExceptionHandler<ApiExceptionHandler>();
 builder.Services.AddProblemDetails();
@@ -33,6 +37,7 @@ var app = builder.Build();
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
+    app.UseDeveloperExceptionPage();
     app.UseSwagger();
     app.UseSwaggerUI();
 }
