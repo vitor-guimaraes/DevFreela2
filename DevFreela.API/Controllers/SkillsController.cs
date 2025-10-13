@@ -1,6 +1,12 @@
-﻿using DevFreela.Application.Models;
+﻿using DevFreela.Application.Commands.SkillCommands.DeleteSkill;
+using DevFreela.Application.Commands.SkillCommands.InsertSkill;
+using DevFreela.Application.Commands.SkillCommands.UpdateSkill;
+using DevFreela.Application.Models;
+using DevFreela.Application.Queries.GetAllSkills;
+using DevFreela.Application.Queries.GetSkillById;
 using DevFreela.Application.Services;
 using DevFreela.Infrastucture.Persistence;
+using MediatR;
 using Microsoft.AspNetCore.Mvc;
 
 namespace DevFreela.API.Controllers
@@ -9,29 +15,31 @@ namespace DevFreela.API.Controllers
     [Route("api/skills")]
     public class SkillsController : ControllerBase
     {
-        private readonly DevFreelaDbContext _context;
         private readonly ISkillsService _service;
+        private readonly IMediator _mediator;
 
-        public SkillsController(DevFreelaDbContext context, ISkillsService service)
+
+        public SkillsController(ISkillsService service, IMediator mediator)
         {
-            _context = context;
             _service = service;
+            _mediator = mediator;
         }
 
         [HttpGet]
-        public IActionResult GetAll()
+        public async Task<IActionResult> GetAll()
         {
             //var skills = _context.Skills.ToList();
 
             //return Ok(skills);
+            var query = new GetAllSkillsQuery();
 
-            var result = _service.GetAllSkills();
+            var result = await _mediator.Send(query);
 
             return Ok(result);
         }
 
         [HttpGet("{id}")]
-        public IActionResult GetById(int id)
+        public async Task<IActionResult> GetById(int id)
         {
             //var skill = _context.Skills
             //    .SingleOrDefault(s => s.Id == id);
@@ -46,15 +54,19 @@ namespace DevFreela.API.Controllers
             //    Id = skill.Id,
             //    Description = skill.Description
             //};
-            
+
             //return Ok(model);
 
-            var skill = _service.GetSkillById(id);
-            return skill.IsSuccess ? Ok(skill) : NotFound(skill.Message);
+            //var skill = _service.GetSkillById(id);
+            var query = new GetSkillByIdQuery(id);
+
+            var result = await _mediator.Send(query);
+
+            return result.IsSuccess ? Ok(result) : NotFound(result.Message);
         }
 
         [HttpPost]
-        public IActionResult Post(CreateSkillInputModel model)
+        public async Task<IActionResult> Post(CreateSkillInputModel model)
         {
             //var skill = model.ToEntity();
 
@@ -63,14 +75,18 @@ namespace DevFreela.API.Controllers
 
             //return CreatedAtAction(nameof(GetById), new { id = 1 }, model);
 
-            var skill = _service.PostSkill(model);
+            //var skill = _service.PostSkill(model);
 
-            return skill.IsSuccess ? CreatedAtAction(nameof(GetById), new { id = skill.Data }, skill) 
-                : BadRequest(skill.Message);
+            var command = new InsertSkillCommand(model.Description);
+
+            var result = await _mediator.Send(command);
+
+            return result.IsSuccess ? CreatedAtAction(nameof(GetById), new { id = result.Data }, result) 
+                : BadRequest(result.Message);
         }
 
         [HttpPut("{id}")]
-        public IActionResult Put(int id, UpdateSkillInputModel model)
+        public async Task<IActionResult> Put(int id, UpdateSkillInputModel model)
         {
             //var skill = _context.Skills.SingleOrDefault(s => s.Id == id);
 
@@ -86,13 +102,17 @@ namespace DevFreela.API.Controllers
 
             //return CreatedAtAction(nameof(GetById), new { id = 1 }, model);
 
-            var skill = _service.UpdateSkill(id, model);
+            //var skill = _service.UpdateSkill(id, model);
 
-            return skill.IsSuccess ? NoContent() : NotFound(skill.Message);
+            var command = new UpdateSkillCommand(id, model.Description);
+
+            var result = await _mediator.Send(command);
+
+            return result.IsSuccess ? NoContent() : NotFound(result.Message);
         }
 
         [HttpDelete]
-        public IActionResult Delete(int id)
+        public async Task<IActionResult> Delete(int id)
         {
             //var skill = _context.Skills.SingleOrDefault(s => s.Id == id);
 
@@ -106,9 +126,12 @@ namespace DevFreela.API.Controllers
 
             //return NoContent();
 
-            var skill = _service.DeleteSkill(id);
+            //var skill = _service.DeleteSkill(id);
 
-            return skill.IsSuccess ? NoContent() : NotFound(skill.Message);
+            var command = new DeleteSkillCommand(id);
+            var result = await _mediator.Send(command);
+
+            return result.IsSuccess ? NoContent() : NotFound(result.Message);
 
         }
     }

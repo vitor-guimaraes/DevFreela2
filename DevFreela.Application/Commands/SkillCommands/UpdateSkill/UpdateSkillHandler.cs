@@ -24,7 +24,7 @@ namespace DevFreela.Application.Commands.SkillCommands.UpdateSkill
             skill.Update(request.Description);
 
             _context.Skills.Update(skill);
-            _context.SaveChangesAsync();
+            await _context.SaveChangesAsync();
 
             return ResultViewModel.Success();
         }
