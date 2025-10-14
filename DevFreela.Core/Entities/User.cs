@@ -1,4 +1,5 @@
 ﻿using DevFreela.Core.Entities;
+using System.Data;
 
 namespace DevFreela.Core.Entities
 {
@@ -18,6 +19,14 @@ namespace DevFreela.Core.Entities
             Comments = [];
         }
 
+        public User(string fullName, string email)
+            : base()
+        {
+            FullName = fullName;
+            Email = email;
+            Active = true;
+        }
+
         public string FullName { get; private set; }
         public string Email { get; private set; }
         public DateTime BirthDate { get; private set; }
@@ -31,5 +40,12 @@ namespace DevFreela.Core.Entities
         {
             Active = false;
         }
+
+        public void UpdateUser(string fullName, string email)
+        {
+            FullName = fullName;
+            Email = email;
+        }
+
     }
 }

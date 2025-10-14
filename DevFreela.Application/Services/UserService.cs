@@ -96,22 +96,22 @@ namespace DevFreela.Application.Services
             return ResultViewModel.Success();
         }
 
-        //public ResultViewModel UpdateUser(int id, UpdateUserInputModel model)
-        //{
-        //    var user = _context.Users
-        //                .SingleOrDefault(u => u.Id == id && u.Active);
+        public ResultViewModel UpdateUser(int id, UpdateUserInputModel model)
+        {
+            var user = _context.Users
+                        .SingleOrDefault(u => u.Id == id && u.Active);
 
-        //    if (user is null)
-        //    {
-        //        return ResultViewModel.Error("User not found");
-        //    }
+            if (user is null)
+            {
+                return ResultViewModel.Error("User not found");
+            }
 
-        //    user.UpdateUser(model.FullName, model.Email, model.BirthDate);
+            user.UpdateUser(model.FullName, model.Email);
 
-        //    _context.Users.Update(user);
-        //    _context.SaveChanges();
+            _context.Users.Update(user);
+            _context.SaveChanges();
 
-        //    return ResultViewModel.Success();
-        //}
+            return ResultViewModel.Success();
+        }
     }
 }
