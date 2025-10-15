@@ -1,4 +1,5 @@
 ﻿using DevFreela.Application.Commands.ProjectCommands.InsertProject;
+using DevFreela.Application.Queries.GetAllUsers;
 using DevFreela.Application.Services;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -24,6 +25,7 @@ namespace DevFreela.Application
         private static IServiceCollection AddHandlers(this IServiceCollection services)
         {
             services.AddMediatR(cfg => cfg.RegisterServicesFromAssemblyContaining<InsertProjectCommand>());
+            services.AddMediatR(cfg => cfg.RegisterServicesFromAssemblyContaining<GetAllUsersHandler>());
 
             return services;
         }

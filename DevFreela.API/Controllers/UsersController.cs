@@ -1,7 +1,16 @@
-﻿using DevFreela.Application.Models;
+﻿using DevFreela.Application.Commands.ProjectCommands.DeleteProject;
+using DevFreela.Application.Commands.ProjectCommands.InsertProject;
+using DevFreela.Application.Commands.UserCommands.DeleteUser;
+using DevFreela.Application.Commands.UserCommands.InsertUser;
+using DevFreela.Application.Models;
+using DevFreela.Application.Queries.GetAllProjects;
+using DevFreela.Application.Queries.GetAllUsers;
+using DevFreela.Application.Queries.GetProjectById;
+using DevFreela.Application.Queries.GetUserById;
 using DevFreela.Application.Services;
 using DevFreela.Core.Entities;
 using DevFreela.Infrastucture.Persistence;
+using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -11,16 +20,17 @@ namespace DevFreela.API.Controllers
     [Route("api/users")]
     public class UsersController : ControllerBase
     {
-        private readonly DevFreelaDbContext _context;
         private readonly IUserService _service;
-        public UsersController(DevFreelaDbContext context, IUserService service)
+        private readonly IMediator _mediator;
+
+        public UsersController(IUserService service, IMediator mediator)
         {
-            _context = context;
             _service = service;
+            _mediator = mediator;
         }
 
         [HttpGet]
-        public IActionResult GetAll()
+        public async Task<IActionResult> GetAll()
         {
             //var users = _context.Users
             //    .Where(u => u.Active)
@@ -28,13 +38,17 @@ namespace DevFreela.API.Controllers
             //var model = users.Select(UserViewModel.FromEntity).ToList();
             //return Ok(model);
 
-            var result = _service.GetAllUsers();
+            //var result = await _service.GetAllUsers();
+
+            var query = new GetAllUsersQuery();
+            var result = await _mediator.Send(query);
+
             return result.IsSuccess ? Ok(result) : NotFound(result.Message);
 
         }
 
         [HttpGet("{id}")]
-        public IActionResult GetById(int id)
+        public async Task<IActionResult> GetById(int id)
         {
             //var user = _context.Users
             //    .Include(u => u.Skills)
@@ -49,25 +63,37 @@ namespace DevFreela.API.Controllers
             //var model = UserViewModel.FromEntity(user);
             //return Ok(model);
 
-            var user = _service.GetUserById(id);
-            return user.IsSuccess ? Ok(user) : NotFound(user.Message);
+            //var user = _service.GetUserById(id);
+
+            var query = new GetUserByIdQuery(id);
+            var result = await _mediator.Send(query);
+
+            return result.IsSuccess ? Ok(result) : NotFound(result.Message);
+
         }
 
         [HttpPost]
-        public IActionResult Post(CreateUserInputModel model)
+        public async Task<IActionResult> Post(CreateUserInputModel model)
         {
             //var user = model.ToEntity();
             //_context.Users.Add(user);
             //_context.SaveChanges();
             //return CreatedAtAction(nameof(GetById), new { id = user.Id }, UserViewModel.FromEntity(user));
 
-            var user =_service.PostUser(model);
-            return user.IsSuccess ? CreatedAtAction(nameof(GetById), new { id = user.Data }, user) 
-                : BadRequest(user.Message);
+            //var user =_service.PostUser(model);
+            //return user.IsSuccess ? CreatedAtAction(nameof(GetById), new { id = user.Data }, user) 
+            //    : BadRequest(user.Message);
+
+            var command = new InsertUserCommand(model.Id, model.FullName, model.Email, model.Password, model.Role);
+
+            var result = await _mediator.Send(command);
+
+            return result.IsSuccess ? CreatedAtAction(nameof(GetById), new { id = result.Data }, result)
+                : BadRequest(result.Message);
         }
 
         [HttpPost("{id}/skills")]
-        public IActionResult PostSkills(int id, UserSkillsInputModel model)
+        public async Task<IActionResult> PostSkills(int id, UserSkillsInputModel model)
         {
             //var userSkills = model.SkillIds
             //    .Select(skillId => new UserSkill(id, skillId))
@@ -83,7 +109,7 @@ namespace DevFreela.API.Controllers
         }
 
         [HttpDelete("{id}")]
-        public IActionResult Delete(int id)
+        public async Task<IActionResult> Delete(int id)
         {
             //var user = _context.Users
             //    .SingleOrDefault(u => u.Id == id);
@@ -100,12 +126,18 @@ namespace DevFreela.API.Controllers
 
             //return NoContent();
 
-            var user = _service.DeleteUser(id);
-            return user.IsSuccess ? NoContent() : NotFound(user.Message);
+            //var user = _service.DeleteUser(id);
+            //return user.IsSuccess ? NoContent() : NotFound(user.Message);
+
+            var command = new DeleteUserCommand(id);
+
+            var result = await _mediator.Send(command);
+
+            return result.IsSuccess ? NoContent() : BadRequest(result.Message);
         }
 
         [HttpPut("{id}/profile-picture")]
-        public IActionResult PostProfilePicture(int id, IFormFile file)
+        public async Task<IActionResult> PostProfilePicture(int id, IFormFile file)
         {
             var descritption = $"File: {file.Name}, Size: {file.Length}";
 
